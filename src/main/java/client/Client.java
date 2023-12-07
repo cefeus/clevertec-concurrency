@@ -2,6 +2,7 @@ package client;
 
 import entity.Request;
 import entity.Response;
+import lombok.Getter;
 import server.Server;
 
 import java.util.ArrayList;
@@ -12,16 +13,18 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class Client {
+    @Getter
     private List<Integer> intSource;
     private final Lock lock = new ReentrantLock();
     private final int dataQuantity;
     private Integer accumulator;
-    private final Server server = new Server();
+    private final Server server;
     private final Random rand = new Random();
 
     private final ExecutorService threads;
 
-    public Client(int threadCount, int dataQuantity) {
+    public Client(int threadCount, int dataQuantity, Server server) {
+        this.server = server;
         this.dataQuantity = dataQuantity;
         accumulator = 0;
         intSource = fillArray(dataQuantity);
@@ -49,7 +52,6 @@ public class Client {
     private void addToAccumulator(Future<Response> response) {
         try {
             Integer value = response.get().getResponseValue();
-            System.out.println(value);
             lock.lock();
             accumulator += value;
             lock.unlock();

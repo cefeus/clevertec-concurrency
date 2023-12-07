@@ -2,6 +2,7 @@ package server;
 
 import entity.Request;
 import entity.Response;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,14 +12,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Server {
 
-    public final List<Integer> received = new ArrayList<>();
+    @Getter
+    private final List<Integer> received = new ArrayList<>();
     private final Lock lock = new ReentrantLock();
 
     public Response answer(Request request) {
-        Response response;
         lock.lock();
         received.add(request.getRequestValue());
-        response = new Response(received.size());
+        Response response = new Response(received.size());
         lock.unlock();
         sleepRandom(100, 1000);
         return response;
